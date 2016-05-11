@@ -1,7 +1,10 @@
 // 大众点评上爬取所有"黄焖鸡米饭"的商户信息
 var keywords = "黄焖鸡米饭";
 var scanUrls = ["http://www.dianping.com/search/keyword/1/0_"+keywords];
-for (var i = 1; i <= 2323; i++) {
+//国内的城市id到2323，意味着种子url有2323个
+//作为sample，这里改成1，只爬取上海的黄焖鸡米饭门店
+//for (var i = 1; i <= 2323; i++) {
+for (var i = 1; i <= 1; i++) {
     scanUrls.push("http://www.dianping.com/search/keyword/"+i+"/0_"+keywords);
 }
 
