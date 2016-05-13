@@ -40,27 +40,27 @@ var configs = {
     ]
 };
 
-configs.onProcessHelperUrl = function(url, content) {
+configs.onProcessHelperUrl = function(url, content, site) {
     var urls = extractList(content, "//div[@class='tit']/a[not(contains(@class,'shop-branch'))]/@href");
     for (var i = 0; i < urls.length; i++) {
-        addUrl(urls[i]+"/editmember");
+        site.addUrl(urls[i]+"/editmember");
     }
     var nextPage = extract(content,"//div[@class='page']/a[@class='next']/@href");
     if (nextPage) {
-        addUrl(nextPage);
+        site.addUrl(nextPage);
         var result = /\d+$/.exec(nextPage);
         if (result) {
             var data = result[0];
             var count = nextPage.length-data.length;
             var lll = nextPage.substr(0, count)+(parseInt(data)+1);
-            addUrl(nextPage.substr(0, count)+(parseInt(data)+1));
-            addUrl(nextPage.substr(0, count)+(parseInt(data)+2));
+            site.addUrl(nextPage.substr(0, count)+(parseInt(data)+1));
+            site.addUrl(nextPage.substr(0, count)+(parseInt(data)+2));
         }
     }
     return false;
 }
 
-configs.afterExtractField = function(fieldName, data) {
+configs.afterExtractField = function(fieldName, data, page) {
     if (fieldName == "id") {
         var result = /\d+$/.exec(data);
         if (result) {
@@ -69,7 +69,7 @@ configs.afterExtractField = function(fieldName, data) {
     }
     else if (fieldName == "shop_name") {
         if (data.indexOf("黄焖鸡米饭") == -1) {
-            skip();
+            page.skip();
         }
     }
     else if (fieldName == "create_time") {
@@ -93,4 +93,5 @@ configs.afterExtractField = function(fieldName, data) {
     return data;
 }
 
-start(configs);
+var crawler = new Crawler(configs);
+crawler.start();
