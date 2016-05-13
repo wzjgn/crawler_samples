@@ -14,4 +14,5 @@ var configs = {
         }
     ]
 };
-start(configs);
+var crawler = new Crawler(configs);
+crawler.start();
