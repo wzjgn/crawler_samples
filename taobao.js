@@ -44,4 +44,4 @@ configs.onProcessHelperUrl = function(url, content, site){
     return true;
 };
 var crawler = new Crawler(configs);
-start();
+crawler.start();
