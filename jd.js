@@ -10,9 +10,9 @@ var comment_count = 100;//@input(comment_count, 爬取的评论数, 最多爬取
 var page_count = comment_count / 10;
 keyword = keyword.trim();
 var scanUrls = [];
-scanUrls.push("http://search.jd.com/Search?keyword="+keyword.replace(/ /g, "+")+"&enc=utf-8&qrst=1&rt=1&stop=1&book=y&vt=2&page=1&s=1&click=0");
+scanUrls.push("http://search.jd.com/Search?keyword="+keyword.replace(/ /g, "+")+"&enc=utf-8");
 var helperUrlRegexes = [];
-helperUrlRegexes.push("http://search\\.jd\\.com/Search\\?keyword="+keyword.replace(/ /g, "\\+").replace(/\./g, "\\.")+"&enc=utf-8&qrst=1&rt=1&stop=1&book=y&vt=2&page=\\d+&s=1&click=0");
+helperUrlRegexes.push("http://search\\.jd\\.com/Search\\?keyword="+keyword.replace(/ /g, "\\+").replace(/\./g, "\\.")+"&enc=utf-8");
 
 var configs = {
     domains: ["search.jd.com","item.jd.com","club.jd.com"],
