@@ -1,13 +1,8 @@
 //使用javascript编写的爬虫源码，用于爬取豌豆荚游戏排行榜（http://www.wandoujia.com/top/game）上的游戏信息。
 //代码粘贴到神箭手云爬虫平台上就可以直接跑了，不需要安装编译环境。要爬取其他网站，//可以更改源码即可。
 
-//代码执行步骤：
-//1、打开浏览器，输入并打开神箭手官网：http://www.shenjianshou.cn。
-//2、登录进入后台。
-//3、点击后台的“爬虫模板编写”->“新建爬虫模板”。
-//4、将代码拷贝到模板脚本里，点击“保存”。
-//5、点击“我的任务”->“创建爬虫任务”。
-//6、选择刚编写的模板后保存，跳转到任务页面后点击启动，等一段时间后爬取的结果就会显示在任务页面。
+//代码执行具体步骤请参考：
+//https://github.com/ShenJianShou/crawler_samples/blob/master/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E6%A0%B7%E4%BE%8B%E4%BB%A3%E7%A0%81.txt
 
 var configs = {
     domains: ["apps.wandoujia.com"],
