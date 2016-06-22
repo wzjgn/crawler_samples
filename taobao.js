@@ -13,19 +13,31 @@ var configs = {
     interval: 10000,
     fields: [
         {
-            // 第一个抽取项
             name: "title",
             selector: "//h3[contains(@class,'tb-main-title')]/@data-title",
             required: true
         },
         {
-            // 第二个抽取项
-            name: "price",
-            selector: "//em[@id='J_PromoPriceNum'] | //em[contains(@class,'tb-rmb-num')]",
-            required: true
+            name: "id",
+            selector: "//input[@name='item_id']/@value",
+            transient: true
         },
         {
-            // 第三个抽取项
+            name: "price",
+            selector: "//em[@id='J_PromoPriceNum'] | //em[contains(@class,'tb-rmb-num')]"
+        },
+        {
+            name: "price_promotion",
+            sourceType: SourceType.AttachedUrl,
+            attachedUrl: "https://detailskip.taobao.com/service/getData/1/p2/item/detail/sib.htm?itemId={id}&modules=qrcode,viewer,price,contract,duty,xmpPromotion,dynStock,delivery,sellerDetail,activity,fqg,zjys,coupon&callback=",
+            attachedHeaders: {
+                "Referer": "https://item.taobao.com"
+            },
+            selectorType: SelectorType.JsonPath,
+            selector: "$.data.promotion.promoData..def..price",
+            transient: true
+        },
+        {
             name: "thumb",
             selector: "//*[@id='J_ImgBooth']"
         }
@@ -87,6 +99,15 @@ configs.onProcessHelperPage = function(page, content, site) {
     var nextUrl = page.url.replace("&s=" + currentStart, "&s=" + start);
     site.addUrl(nextUrl);
     return false;
+};
+
+configs.afterExtractPage = function(page, data){
+    var realPrice = data.price_promotion;
+    if(realPrice===""||realPrice==="[]"||realPrice===null||realPrice===undefined){
+      realPrice = data.price;
+    }
+    data.price = realPrice;
+    return data;
 };
 
 var crawler = new Crawler(configs);
