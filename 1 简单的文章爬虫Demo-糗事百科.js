@@ -39,6 +39,7 @@ configs.afterExtractField = function(fieldName, data, page){
       }
     }else if(fieldName=="article_publish_time"){
       data = Date.parse(new Date())/1000+""; // 发布日期转换成时间戳
+      // 使用神箭手进行数据发布时，默认处理的时间戳是10位。如非特殊，请转换成10位时间戳
     }
   return data;
 };
