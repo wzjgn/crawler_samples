@@ -12,9 +12,10 @@ for (var i = 0; i < keywords.length; i++) {
 }
 var configs = {
     domains: ["wenda.so.com"],
-    scanUrls: scanUrls,
+    scanUrls: [],
     contentUrlRegexes: [/http:\/\/wenda\.so\.com\/q\/\d+.*/],
     helperUrlRegexes: helperUrlRegexes,
+    timeout : 10000,
     enableProxy: true, // 1、设置enableProxy为true表示开启自动代理IP切换。启动爬虫前，切换的代理IP类别需要在爬虫设置中设置。
     fields: [
         {
@@ -79,6 +80,12 @@ var configs = {
             ]
         }
     ]
+};
+
+configs.beforeCrawl = function (site) {
+    for(var i=0;i<scanUrls.length;i++){
+        site.addScanUrl(scanUrls[i]);
+    }
 };
 
 /*
