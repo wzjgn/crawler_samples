@@ -5,7 +5,7 @@
   托管图片的步骤是：
   1、启动爬虫之前，需要在爬虫设置中勾选"图片云托管"，并且设置托管的位置
   2、爬取结果里，后缀名是.jpg/.png/.gif/.jpeg的field，或者img标签里的图片，神箭手在爬取过程中会默认进行下载托管
-  3、后缀名非以上情况，或者数组里的图片链接，默认不会下载托管，需要在代码中调用内置函数 cacheImg （参考以下代码的afterExtractField回调函数）
+  3、后缀名非以上情况，或者数组里的图片链接，默认不会下载托管，需要在代码中调用内置函数 hostFile （参考以下代码的afterExtractField回调函数）
 */
 
 var cities = ["北京"];//@tags(cities, 请输入要爬取的城市，分别爬取58上这些城市的二手物品信息)
@@ -98,13 +98,14 @@ configs.afterExtractField = function(fieldName, data, page){
       data = data.substring(0,index);
     }else if(fieldName == "contact_thumb"){
       // contact_thumb 不是以jpg，png，gif和jpeg标准图片后缀名结尾的；
-      // 所以调用cacheImg表示该项数据是图片类型，在爬取过程中可以被当作图片托管
-      data = cacheImg(data);
+      // 所以调用hostFile表示该项数据是图片类型，在爬取过程中可以被当作图片托管
+      // hostFile也可以用来设置托管其他类型的文件，比如视频、文档等，具体请查看神箭手开发文档中对这一函数的解释
+      data = hostFile(data, FileType.IMAGE);
     }else if(fieldName == "photos"){
       // 数组里的图片链接默认不可被托管；
-      // 需要对数组里的每个链接调用cacheImg
+      // 需要对数组里的每个链接调用hostFile
       for(var i=0;i<data.length;i++){
-        data[i] = cacheImg(data[i]);
+        data[i] = hostFile(data[i], FileType.IMAGE);
       }
     }else if(fieldName=="locations"){
       var skip = true;
