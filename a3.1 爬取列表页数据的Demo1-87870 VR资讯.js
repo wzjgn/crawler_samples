@@ -12,7 +12,7 @@ var configs = {
         {
             name: "article_title",
             alias: "文章标题",
-            selector: "//div[contains(@class,'info_wrap')]/h1",
+            selector: "//div[contains(@class,'content-wrap')]/h1",
             required: true
         },
         {
@@ -23,17 +23,17 @@ var configs = {
         {
             name: "article_content",
             alias: "文章正文",
-            selector: "//div[contains(@class,'content')]"
+            selector: "//div[contains(@class,'content-wrap')]/div[contains(@class,'content')]"
         },
         {
             name: "article_publish_time",
             alias: "发布日期",
-            selector: "//div[contains(@class,'infofabudate')]/text()[1]"
+            selector: "//span[contains(@class,'pub-time')]"
         },
         {
             name: "article_author",
             alias: "作者",
-            selector: "//span[contains(text()[1],'作者')]/em/a/text()"
+            selector: "//div[contains(@class,'author-info')]//p[contains(@class,'tit')]/text()"
         },
         {
             name: "article_tags",
@@ -83,7 +83,7 @@ configs.onProcessContentPage = function(page, content, site){
 configs.afterExtractField = function(fieldName, data, page) {
     if(data===null || data==="" || typeof(data)=="undefined"){
       if(fieldName=="article_author"){
-        data = extract(page.raw, "//font[contains(@class,'fabuuser')]"); // 如果没有作者，就抽取发布者作为文章作者
+        data = extract(page.raw, "//span[contains(@class,'pub-from')]/a/text()"); // 如果没有作者，就抽取来源作为文章作者
       }
       return data;
     }
