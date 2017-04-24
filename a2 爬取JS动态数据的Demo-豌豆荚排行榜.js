@@ -29,9 +29,9 @@ var configs = {
 };
 
 /*
-  回调函数onProcessHelperUrl：获取下一页列表页以及从列表页中获取内容页链接，并手动添加到待爬队列中
+  回调函数onProcessHelperPage：获取下一页列表页以及从列表页中获取内容页链接，并手动添加到待爬队列中
 */
-configs.onProcessHelperUrl = function(url, content, site) {
+configs.onProcessHelperPage = function(page, content, site) {
     // 列表页返回的数据是json，需要先转换成json格式
     var jarr = JSON.parse(content);
     // 从json数组中获取内容页链接并添加到待爬队列中
@@ -40,7 +40,7 @@ configs.onProcessHelperUrl = function(url, content, site) {
       site.addUrl(new_url);
     }
     // 获取下一页列表页链接并添加到待爬队列中
-    var currentStart = parseInt(url.substring(url.indexOf("&start=") + 7));
+    var currentStart = parseInt(page.url.substring(page.url.indexOf("&start=") + 7));
     var start = currentStart+12;
     if(start < 100){ // 该demo只爬取游戏排行榜前100的游戏
       site.addUrl("http://apps.wandoujia.com/api/v1/apps?type=weeklytopgame&max=12&start="+start);
