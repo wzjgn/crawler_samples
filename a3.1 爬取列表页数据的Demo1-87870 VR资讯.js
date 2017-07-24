@@ -1,13 +1,13 @@
 /*
-  爬取87870 VR资讯（http://news.87870.com/xinwen-1-01-1.html）的文章，文章的标签信息只在文章列表页里，在内容页里是抽取不到的。
+  爬取87870 VR资讯（http://hy.87870.com/news/list-0-0-1.html）的文章，要爬取的文章标签信息在文章列表页里。
   所以该Demo中我们使用神箭手提供的 UrlContext 附加数据 将列表页需要的数据附加到内容页中，再进行统一抽取。
 */
 
 var configs = {
-    domains: ["news.87870.com"],
-    scanUrls: ["http://news.87870.com/ajax/ashx/news/2016NewsList.ashx?action=newslist&cid=01&sort=1&pageindex=1&pagesize=8"],
-    contentUrlRegexes: [/http:\/\/news\.87870\.com\/xinwennr-\d+\.html/],
-    helperUrlRegexes: [/http:\/\/news\.87870\.com\/ajax\/ashx\/news\/2016NewsList\.ashx\?action=newslist&cid=01&sort=1&pageindex=\d+&pagesize=8/],
+    domains: ["hy.87870.com"],
+    scanUrls: ["http://hy.87870.com/news/list-0-0-1.html"],
+    contentUrlRegexes: [/http:\/\/hy\.87870\.com\/news\/details-\d+\.html/],
+    helperUrlRegexes: [/http:\/\/hy\.87870\.com\/news\/list-0-0-\d+\.html/],
     fields: [
         {
             name: "article_title",
@@ -39,8 +39,9 @@ var configs = {
             name: "article_tags",
             alias: "标签",
             // 3、从之前添加到内容页中的附加数据中抽取文章标签
-            sourceType: SourceType.UrlContext, // 将来源设置为UrlContext
-            selector: "//div[@id='sjs-tags']"
+            sourceType: SourceType.UrlContext, // 将抽取的数据来源设置为UrlContext
+            selector: "//div[@id='sjs-tags']//a/text()",
+            repeated : true
         }
     ]
 };
@@ -50,30 +51,28 @@ configs.onProcessScanPage = function(page, content, site){
 };
 
 configs.onProcessHelperPage = function(page, content, site){
-    var matches = /pageindex=(\d+)/.exec(page.url);
-    if(!matches){
+    var contentList = extractList(content, "//ul[contains(@class,'news-list')]/li");
+    if(!contentList){
       return false;
     }
-    var json = JSON.parse(content);
-    var list = json.list;
-    if(list===null || list==="" || typeof(list)=="undefined"){
-      return false;
-    }
-    for(var i=0;i<list.length;i++){
+    for(var i=0;i<contentList.length;i++){
       // 1、获取列表页中每篇文章的tags数据
-      var tags = list[i].tags;
-      var commonID = list[i].commonID;
+      var tags = extract(contentList[i], "//span[contains(@class,'keyword')]");
+      var contentUrl = extract(contentList[i], "//a[contains(@class,'news-tit')]/@href");
       var options = {
         method: "GET",
         contextData: '<div id="sjs-tags">'+tags+'</div>' // 将tags数据添加到options的contextData中
       };
       // 2、将options附加到内容页中，再将内容页链接添加到待爬队列中
-      site.addUrl("http://news.87870.com/xinwennr-"+commonID+".html", options);
+      site.addUrl(contentUrl, options);
     }
-  
-    var nextPage = parseInt(matches[1])+1;
-    site.addUrl("http://news.87870.com/ajax/ashx/news/2016NewsList.ashx?action=newslist&cid=01&sort=1&pageindex="+nextPage+"&pagesize=8");
-    return false;
+    // 判断是否有下一页列表页以及将下一页列表页链接添加到待爬队列中
+    var nextPage = extract(content, "//a[contains(@class,'next')]/@href");
+    if(nextPage){
+      site.addUrl(nextPage);
+    }
+    
+    return false; //不让爬虫自动发现新的待爬链接
 };
 
 configs.onProcessContentPage = function(page, content, site){
@@ -81,18 +80,16 @@ configs.onProcessContentPage = function(page, content, site){
 };
 
 configs.afterExtractField = function(fieldName, data, page) {
-    if(data===null || data==="" || typeof(data)=="undefined"){
+    if(!data){
       if(fieldName=="article_author"){
-        data = extract(page.raw, "//span[contains(@class,'pub-from')]/a/text()"); // 如果没有作者，就抽取来源作为文章作者
+        data = extract(page.raw, "//span[contains(@class,'pub-from')]/following-sibling::text()"); // 如果没有作者，就抽取来源作为文章作者
       }
       return data;
     }
     if (fieldName == "article_publish_time") {
       var timestamp = parseDateTime(data.trim());
-      return isNaN(timestamp) ? "0" : timestamp/1000 + "";
-    }else if(fieldName == "article_summary"){
-      return exclude(data, "//span[contains(@class,'tag')]"); // 从抽取的导读内容中去掉不需要的部分数据
-    } 
+      return isNaN(timestamp) ? "0" : timestamp/1000 + "";// 时间转换为时间戳格式，方便自动发布文章到网站
+    }
     return data;
 };
 
