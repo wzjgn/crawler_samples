@@ -28,7 +28,8 @@ var configs = {
         {
             name: "article_publish_time",
             alias: "发布日期",
-            selector: "//span[contains(@class,'pub-time')]"
+            selector: "//span[contains(@class,'pub-time')]",
+            type: "date"
         },
         {
             name: "article_author",
