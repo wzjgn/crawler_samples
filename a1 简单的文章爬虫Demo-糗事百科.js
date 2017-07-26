@@ -1,8 +1,8 @@
 var configs = {
   domains: ["qiushibaike.com"],// 网站域名，设置域名后只处理这些域名下的网页
-  scanUrls: ["http://www.qiushibaike.com/"],// 入口页链接，分别从这些链接开始爬取
-  contentUrlRegexes: [/http:\/\/www\.qiushibaike\.com\/article\/\d+/],// 内容页url的正则，符合这些正则的页面会被当作内容页处理
-  helperUrlRegexes: [/http:\/\/www\.qiushibaike\.com\/(8hr\/page\/\d+.*)?/],// 列表页url的正则，符合这些正则的页面会被当作列表页处理
+  scanUrls: ["https://www.qiushibaike.com/"],// 入口页链接，分别从这些链接开始爬取
+  contentUrlRegexes: [/https?:\/\/www\.qiushibaike\.com\/article\/\d+/],// 内容页url的正则，符合这些正则的页面会被当作内容页处理
+  helperUrlRegexes: [/https?:\/\/www\.qiushibaike\.com\/(8hr\/page\/\d+.*)?/],// 列表页url的正则，符合这些正则的页面会被当作列表页处理
   fields: [  // 从内容页中抽取需要的数据  
     {
         name: "article_title",
@@ -27,6 +27,13 @@ var configs = {
        selector: "//div[contains(@class,'author')]//h2"
     }
   ]
+};
+
+configs.isAntiSpider = function (url, content, page) {
+    if(content && content.indexOf("您的请求太过频繁，请稍后再试")>-1){
+        return true;
+    }
+    return false;
 };
 
 /*
