@@ -30,67 +30,66 @@ var configs = {
     domains: ["tuniu.com"],
     scanUrls: [],
     contentUrlRegexes: [/http:\/\/www\.tuniu\.com\/flight\/city_\d+_\d+\/\?start=.+/],
-    contentHelperRegexes: [""], // 设置待爬队列中所有网页都不是列表页
+    helperUrlRegexes: [""], // 设置待爬队列中所有网页都不是列表页
     enableJS: true, // 设置enableJS为true，那么待爬队列里的所有网页都会自动进行JS渲染
-    renderTime: 10000, // 自动渲染最长等待时间：10秒内若网页未请求数据, 自动JS渲染会立即结束。默认值为3秒, 最大值为10分钟
     fields: [  // fields里的数据都是js生成的，开启js渲染后抽取和正常抽取网页源码里的数据一样简单
         {
             name: "flights", // 如果fields里只有一个field（对象数组），表示单页提取多条数据。
-            selector: "//div[@id='J_AirLIst']/div[contains(@class,'flg')]", 
+            selector: "//div[contains(@class,'flightlist')]/div[contains(@class,'flg')]", 
             repeated: true,
             children: [   
                 {
                     name: "flight_number",
                     alias: "航班号",
-                    selector: "//div[contains(@class,'flg_name')]/span[last()]/text()",
+                    selector: "//div[contains(@class,'flihtnumber')]/span[contains(@class,'number')]",
                     primaryKey: true // primaryKey设置为true的field会一起作为主键，主键完全相同的数据会自动去重。缺省第一个field是主键
                 },
                 {
                     name: "airline",
                     alias: "航空公司",
-                    selector: "//span[contains(@class,'airlineNames')]/text()"
+                    selector: "//div[contains(@class,'aircom')]"
                 },
                 {
                     name: "model",
                     alias: "机型",
-                    selector: "//div[contains(@class,'flg_name')]/span[last()]/a/text()"
+                    selector: "//div[contains(@class,'flihtnumber')]/span[contains(@class,'sie')]"
                 },
                 {
                   	 name: "lowest_price",
                     alias: "最低价格（元）",
-                    selector: "//div[contains(@class,'flg_price')]/strong"
+                    selector: "//div[contains(@class,'price')]/span[contains(@class,'muber')]"
                 },
                 {
                     name: "dep_time",
                     alias: "起飞时间",
-                    selector: "//div[contains(@class,'flg_start')]/strong",
+                    selector: "//div[contains(@class,'timeleft')]/p[contains(@class,'hours')]/text()",
                     primaryKey: true
                 },
                 {
                     name: "dep_airport",
                     alias: "起飞机场",
-                    selector: "//div[contains(@class,'flg_start')]/span"
+                    selector: "//div[contains(@class,'timeleft')]/p[contains(@class,'airport')]"
                 },
                 {
                     name: "arv_time",
                     alias: "到达时间",
-                    selector: "//div[contains(@class,'flg_arrival')]/strong",
+                    selector: "//div[contains(@class,'timeright')]/p[contains(@class,'hours')]/text()",
                     primaryKey: true
                 },
                 {
                     name: "arv_airport",
                     alias: "到达机场",
-                    selector: "//div[contains(@class,'flg_arrival')]/span"
+                    selector: "//div[contains(@class,'timeright')]/p[contains(@class,'airport')]"
                 },
                 {
                     name: "duration",
                     alias: "飞行时长",
-                    selector: "//div[contains(@class,'flg_duration')]/span"
+                    selector: "//div[contains(@class,'duration')]/p[contains(@class,'durationTime')]"
                 },
                 {
                   	 name: "ontime_rate",
                     alias: "准点率",
-                    selector: "//div[contains(@class,'flg_rate')]/div[last()]"
+                    selector: "//div[contains(@class,'ratenumber')]"
                 }
             ]
         }
@@ -100,7 +99,7 @@ var configs = {
 configs.beforeCrawl = function(site){
     // 爬取前，先获取城市在途牛上的城市码
     var content = site.requestUrl("http://www.tuniu.com/flight/international/getCities");
-    if(content === null || content === "" || typeof(content)=="undefined"){
+    if(!content){
       system.exit("对方网站无返回"); // 打印错误消息到日志中，并停止运行
     }
     var json = JSON.parse(content); // 返回的是json数据
@@ -114,10 +113,10 @@ configs.beforeCrawl = function(site){
         toCityCode = allCodes[i].cityCode;
       }
     } 
-    if(fromCityCode === ""){
+    if(!fromCityCode){
       system.exit("设置的出发城市错误，没有在途牛上找到该城市");
     }
-    if(toCityCode === ""){
+    if(!toCityCode){
       system.exit("设置的到达城市错误，没有在途牛上找到该城市");
     }
   
@@ -130,35 +129,15 @@ configs.onProcessContentPage = function(page, content, site){
     return false;// 不再从内容页发现新的链接
 };
 
-configs.afterExtractField = function(fieldName, data, page){
-    if(data===null || data==="" || typeof(data)=="undefined"){
+configs.afterExtractField = function (fieldName, data, page, site) {
+    if(!data){
       return data;
     }
-    if(fieldName=="flights.flight_number"){
-      data = data.replace("&nbsp;","");
-    }else if(fieldName=="flights.dep_time"){
+    if(fieldName=="flights.dep_time" || fieldName=="flights.arv_time"){
       return date+" "+data;
-    }else if(fieldName=="flights.arv_time"){
-      if(data.indexOf('<i class="J_AnotherDay')!=-1){
-       // 如果到达时间有+1标志，返回第二天
-       data = extract(data, "//text()");
-       return getNextDay(date)+" "+data; 
-      }else{
-      	return date+" "+data;
-      }
     }
     return data;
 };
-
-/*
-  得到date后一天的时间
-*/
-function getNextDay(date){
-    var timestamp = Date.parse(date);
-    timestamp = timestamp + 1000*60*60*24;
-    date = new Date(timestamp);
-    return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
-}
 
 var crawler = new Crawler(configs);
 crawler.start();
