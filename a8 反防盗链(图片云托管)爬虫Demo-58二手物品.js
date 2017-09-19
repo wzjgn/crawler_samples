@@ -13,9 +13,8 @@ var cities = ["北京"];//@tags(cities, 请输入要爬取的城市，分别爬�
 var configs = {
     domains: ["58.com"],
     scanUrls: [],
-    contentUrlRegexes: [/http:\/\/m\.zhuanzhuan\.58\.com\/detail\/\d+z\.shtml.*/],
-    helperUrlRegexes: [/http:\/\/m\.58\.com\/\w+\/\w+\/(\d+\/)?(pn\d+\/)?.*/],
-    userAgent: UserAgent.Android,  // 从移动端网页爬取，可以设置不同的UA
+    contentUrlRegexes: [/http:\/\/zhuanzhuan\.58\.com\/detail\/\d+z\.shtml.*/],
+    helperUrlRegexes: [/http:\/\/.+\.58\.com\/sale\/.*/],
     enableProxy: true, // 58有反爬，建议使用企业代理ip
     fields: [
         {
@@ -27,39 +26,38 @@ var configs = {
         {
             name: "price",
             alias: "物品价格",
-            selector: "//div[contains(@class,'price')]/span/strong"
+            selector: "string(//span[contains(@class,'price_now')])"
         },
         {
             name: "description",
             alias: "物品描述",
-            selector: "//div[contains(@class,'miaoshu')]"
+            selector: "//div[contains(@class,'baby_kuang')]//p"
         },
         {
             name: "locations",
             alias: "位置",
-            selector: "//div[contains(@class,'weizhi')]/span",
-            repeated: true
+            selector: "//div[contains(@class,'price_li') and contains(string(),'区域')]/i"
         },
         {
             name: "views_count",
             alias: "浏览人数",
-            selector: "//div[contains(@class,'liulan')]"
+            selector: "//div[contains(@class,'look_time')]"
         },
         {
             name: "photos",
             alias: "物品照片",
-            selector: "//div[contains(@class,'image_area')]//li/img/@ref",
+            selector: "//div[contains(@class,'boby_pic')]//img/@src",
             repeated: true
         },
         {
             name: "contact",
             alias: "联系人",
-            selector: "//div[contains(@class,'personal_info')]//span[contains(@class,'nickName')]"
+            selector: "//div[contains(@class,'personal')]//p[contains(@class,'personal_name')]"
         },
         {
             name: "contact_thumb",
             alias: "联系人头像",
-            selector: "//div[contains(@class,'personal_info')]//img[contains(@class,'touxiang')]/@src"
+            selector: "//div[contains(@class,'personal')]//div[contains(@class,'personal_touxiang')]//img/@src"
         }
     ]
 };
@@ -70,20 +68,21 @@ configs.isAntiSpider = function(url, content) {
     }
     return false;
 };
-
 configs.beforeCrawl = function(site){ 
-    var cityContent = site.requestUrl("http://m.58.com/city.html");
+    var cityContent = site.requestUrl("http://www.58.com/changecity.html",{enableJS : true});
     var cityUrls = [];
     if(cities.length<=0){
-      cityUrls = extractList(cityContent,"//ul[contains(@class,'city_lst') and not(contains(@class,'hot'))]/li/a/@href");
+      cityUrls = extractList(cityContent,"//a/@href");
       for(var i=0;i<cityUrls.length;i++){
-        site.addScanUrl(cityUrls[i]+"sale.shtml");
+        if(/http:\/\/\w+\.58.com\//.test(cityUrls[i])){
+          site.addScanUrl(cityUrls[i]+"/sale");
+        }
       }
     }else{
       for(var index = 0;index<cities.length;index++){
         var url = extract(cityContent,"//a[text()='"+cities[index]+"']/@href");
         if(url!==null && typeof(url)!="undefined" && url!==""){
-          site.addScanUrl(url+"sale.shtml");
+          site.addScanUrl(url+"/sale");
         }
       }
     }
