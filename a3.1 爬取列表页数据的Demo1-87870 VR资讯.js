@@ -1,13 +1,13 @@
 /*
-  爬取87870 VR资讯（http://hy.87870.com/news/list-0-0-1.html）的文章，要爬取的文章标签信息在文章列表页里。
+  爬取87870 VR资讯（http://www.87870.com/news/list_0_1.html）的文章，要爬取的文章标签信息在文章列表页里。
   所以该Demo中我们使用神箭手提供的 UrlContext 附加数据 将列表页需要的数据附加到内容页中，再进行统一抽取。
 */
 
 var configs = {
-    domains: ["hy.87870.com"],
-    scanUrls: ["http://hy.87870.com/news/list-0-0-1.html"],
-    contentUrlRegexes: [/http:\/\/hy\.87870\.com\/news\/details-\d+\.html/],
-    helperUrlRegexes: [/http:\/\/hy\.87870\.com\/news\/list-0-0-\d+\.html/],
+    domains: ["www.87870.com"],
+    scanUrls: ["http://www.87870.com/news/list_0_1.html"],
+    contentUrlRegexes: [/http:\/\/www\.87870\.com\/news\/\d+\/\d+\.html/],
+    helperUrlRegexes: [/http:\/\/www\.87870\.com\/news\/list_0_\d+\.html/],
     fields: [
         {
             name: "article_title",
