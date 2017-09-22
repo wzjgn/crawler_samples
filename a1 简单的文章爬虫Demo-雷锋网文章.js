@@ -1,11 +1,11 @@
 var configs = {
     domains: ["leiphone.com"],// 网站域名，设置域名后只处理这些域名下的网页
-    scanUrls: ["http://www.leiphone.com/search?s=vr&site=article"],// 入口页链接，分别从这些链接开始爬取
+    scanUrls: ["https://www.leiphone.com/search?s=vr&site=article"],// 入口页链接，分别从这些链接开始爬取
     contentUrlRegexes: [
-        /http:\/\/www\.leiphone\.com\/news\/\d+\/.+\.html/
+        /https:\/\/www\.leiphone\.com\/news\/\d+\/.+\.html/
     ],// 内容页url的正则，符合这些正则的页面会被当作内容页处理
     helperUrlRegexes: [
-        /http:\/\/www\.leiphone\.com\/search\?s=vr&site=article(&page=\d+)?/
+        /https:\/\/www\.leiphone\.com\/search\?s=vr&site=article(&page=\d+)?/
     ],// 列表页url的正则，符合这些正则的页面会被当作列表页处理
     fields: [
         {
