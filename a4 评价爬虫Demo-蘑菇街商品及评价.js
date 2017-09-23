@@ -8,9 +8,9 @@ var encodeKey = encodeURIComponent(keyword); // 将搜索关键字先url encode
 
 var configs = {
     domains: ["mogujie.com"],
-    scanUrls: ["http://list.mogujie.com/search?page=1&q="+encodeKey],
+    scanUrls: ["http://list.mogujie.com/search?q="+encodeKey+"&cKey=43&page=1&sort=pop"],
     contentUrlRegexes: [/http:\/\/shop\.mogujie\.com\/detail.+/],
-    helperUrlRegexes: [/http:\/\/list\.mogujie\.com\/search\?page=\d+&q=.+/],
+    helperUrlRegexes: [/http:\/\/list\.mogujie\.com\/search\?.+/],
     fields: [
       {
           name:"product_id",
@@ -108,7 +108,7 @@ configs.afterDownloadPage = function(page, site){
       }
       extraHTML+='</div>';
       var index = page.raw.indexOf("</body>");
-    	page.raw = page.raw.substring(0, index) + extraHTML + page.raw.substring(index);
+      page.raw = page.raw.substring(0, index) + extraHTML + page.raw.substring(index);
     }
     return page;
 };
@@ -117,18 +117,22 @@ configs.afterDownloadPage = function(page, site){
   回调函数onProcessHelperUrl：获取下一页列表页和内容页链接，并手动添加到待爬队列中
 */
 configs.onProcessHelperPage = function(page, content, site){
+    var matches = /page=(\d+)/.exec(page.url);
+    if(!matches){
+      return false;
+    }
+    var currentPage = parseInt(matches[1]);
     var json = JSON.parse(content);
-    var isEnd = json.result.wall.isEnd;
-    var currentPage = json.result.wall.page;
+    var isEnd = json.result.wall.isEnd;    
     if(!isEnd){
       // 如果有下一页，将下一页列表页链接加入待爬队列
       var nextPage = currentPage+1;
-      site.addUrl("http://list.mogujie.com/search?page="+nextPage+"&q="+encodeKey);
+      site.addUrl("http://list.mogujie.com/search?q="+encodeKey+"&cKey=43&page="+nextPage+"&sort=pop");
     }
     // 获取内容页链接，并添加到待爬队列中
-    var contents = json.result.wall.list;
+    var contents = json.result.wall.docs;
     for(var i=0;i<contents.length;i++){
-      site.addUrl("http://shop.mogujie.com/detail/"+contents[i].iid+"?acm="+contents[i].acm);
+      site.addUrl(contents[i].link);
     }
     return false;
 };
@@ -147,7 +151,7 @@ configs.onProcessContentPage = function(page, content, site){
   afterExtractPage：对抽取的整页数据进行处理
 */
 configs.afterExtractPage = function(page, data) {
-    if (data.comments === null || typeof(data.comments) === "undefined" || data.comments === "") return data;
+    if (!data.comments) return data;
     // 4、将抽取的每页评价数据拼成一个数组返回
     var comments = [];
     for (var i = 0; i < data.comments.length; i++) {
