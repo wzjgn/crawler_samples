@@ -3,7 +3,7 @@
   因为缴纳记录需要输入验证码、身份证号和查询密码登录后才能查到，所以该API包含了神箭手的验证码自动识别和模拟登录功能。
 */
 var uid = "";//@input(uid,查询的身份证号)
-var pwd = "";//@input(pwd,社保查询密码，登录地址：http://www.bjrbj.gov.cn/csibiz/indinfo/login.jsp)
+var pwd = "";//@input(pwd,社保查询密码，密码错误无法查询【登录地址：http://www.bjrbj.gov.cn/csibiz/indinfo/login.jsp】)
 var year = "";//@input(year,查询年份)
 
 var configs = {
@@ -50,14 +50,15 @@ var configs = {
         
     ]
 };
+
 configs.beforeCrawl = function(site){
-  if(uid==="" || uid===null){
+  if(!uid){
     system.exit("请输入要查询的身份证号");
   }
-  if(pwd==="" || pwd===null){
+  if(!pwd){
     system.exit("请输入社保查询密码");
   }
-  if(year==="" || year===null){
+  if(!year){
     system.exit("请输入要查询的年份");
   }
   // １、识别登录页面的验证码，使用神箭手的内置函数 getCaptcha
@@ -77,14 +78,14 @@ configs.beforeCrawl = function(site){
     };
     // ２、发送登录请求模拟登录。神箭手会自动保存cookie，并在以后的请求中使用之前保存的所有cookie
     site.requestUrl("http://www.bjrbj.gov.cn/csibiz/indinfo/login_check", options);
-    var timestamp=new Date().getTime();
+    var timestamp = new Date().getTime();
     // ３、将待查询的缴纳记录页面url添加为入口页，抽取其中的缴纳数据
     site.addScanUrl("http://www.bjrbj.gov.cn/csibiz/indinfo/search/ind/indPaySearchAction!oldage?searchYear="+year+"&time="+timestamp);
   }
 };
 
-configs.afterExtractField = function(fieldName, data, page){
-  	if(data==="-"){
+configs.afterExtractField = function (fieldName, data, page, site) {
+    if(data==="-"){
       // 如果缴纳记录中某项数据为空(-)，过滤掉该条缴纳记录
       page.skip("records");
     }
