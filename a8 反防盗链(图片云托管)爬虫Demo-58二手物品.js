@@ -15,7 +15,7 @@ var configs = {
     scanUrls: [],
     contentUrlRegexes: [/http:\/\/zhuanzhuan\.58\.com\/detail\/\d+z\.shtml.*/],
     helperUrlRegexes: [/http:\/\/.+\.58\.com\/sale\/.*/],
-    enableProxy: true, // 58有反爬，建议使用企业代理ip
+    enableProxy: true, // 58有反爬，建议使用企业代理ip(不设置此项也可以，在运行爬虫或者测试爬虫之前，选择代理ip种类即可)
     fields: [
         {
             name: "title",
@@ -34,14 +34,19 @@ var configs = {
             selector: "//div[contains(@class,'baby_kuang')]//p"
         },
         {
-            name: "locations",
-            alias: "位置",
-            selector: "//div[contains(@class,'price_li') and contains(string(),'区域')]/i"
+            name: "location",
+            alias: "区域",
+            selector: "//span[contains(text()[1],'区域')]/i"
         },
         {
             name: "views_count",
             alias: "浏览人数",
-            selector: "//div[contains(@class,'look_time')]"
+            selector: "//span[contains(@class,'look_time')]"
+        },
+        {
+            name: "wants_count",
+            alias: "想买人数",
+            selector: "//span[contains(@class,'want_person')]"
         },
         {
             name: "photos",
@@ -62,12 +67,13 @@ var configs = {
     ]
 };
 
-configs.isAntiSpider = function(url, content) {
-    if (content.indexOf("访问过于平频繁，本次访问需要输入验证码") !== -1) {
+configs.isAntiSpider = function (url, content, page) {
+   if (content.indexOf("访问过于平频繁，本次访问需要输入验证码") !== -1) {
         return true;
     }
     return false;
 };
+
 configs.beforeCrawl = function(site){ 
     var cityContent = site.requestUrl("http://www.58.com/changecity.html",{enableJS : true});
     var cityUrls = [];
@@ -81,15 +87,15 @@ configs.beforeCrawl = function(site){
     }else{
       for(var index = 0;index<cities.length;index++){
         var url = extract(cityContent,"//a[text()='"+cities[index]+"']/@href");
-        if(url!==null && typeof(url)!="undefined" && url!==""){
+        if(url){
           site.addScanUrl(url+"/sale");
         }
       }
     }
 };
 
-configs.afterExtractField = function(fieldName, data, page){
-    if(data===null || data==="" || typeof(data)=="undefined"){
+configs.afterExtractField = function (fieldName, data, page, site) {
+    if(!data){
       return data;
     }
     if(fieldName=="title"){
@@ -106,17 +112,12 @@ configs.afterExtractField = function(fieldName, data, page){
       for(var i=0;i<data.length;i++){
         data[i] = hostFile(data[i], FileType.IMAGE);
       }
-    }else if(fieldName=="locations"){
+    }else if(fieldName=="location"){
       var skip = true;
       // 判断爬取的位置中是否包含设置的爬取城市
-      for(var p = 0;p<data.length;p++){
-        for(var j=0;j<cities.length;j++){
-          if(cities[j]==data[p]){
-            skip = false;
-            break;
-          }
-        }
-        if(!skip){
+      for(var j=0;j<cities.length;j++){
+        if(data.indexOf(cities[j])>-1){
+          skip = false;
           break;
         }
       }
@@ -124,7 +125,7 @@ configs.afterExtractField = function(fieldName, data, page){
         // 如果不包含设置的爬取城市，过滤掉该条数据不保存
         page.skip();
       }
-    }else if(fieldName=="views_count"){
+    }else if(fieldName=="views_count" || fieldName=="wants_count"){
       var matches = /\d+/.exec(data);
       if(matches){
         return matches[0];
