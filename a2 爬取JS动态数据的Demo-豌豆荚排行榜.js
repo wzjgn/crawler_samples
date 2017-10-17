@@ -28,6 +28,11 @@ var configs = {
     ]
 };
 
+configs.onProcessScanPage = function (page, content, site) {
+    //取消自动从入口页发现新链接
+    return false;
+};
+
 /*
   回调函数onProcessHelperPage：获取下一页列表页以及从列表页中获取内容页链接，并手动添加到待爬队列中
 */
@@ -46,6 +51,11 @@ configs.onProcessHelperPage = function(page, content, site) {
       site.addUrl("http://apps.wandoujia.com/api/v1/apps?type=weeklytopgame&max=12&start="+start);
     }
     return false; // 返回false表示不从当前列表页中自动发现新的链接，从而避免添加无用的链接，提高爬取速度
+};
+
+configs.onProcessContentPage = function (page, content, site) {
+    //取消自动从内容页发现新链接
+    return false;
 };
 
 var crawler = new Crawler(configs);
