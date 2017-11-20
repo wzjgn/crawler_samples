@@ -1,6 +1,10 @@
 /*
   爬取蘑菇街某关键字商品的信息和评价。
   使用到了关键字动态输入、如何爬取内容页的多页数据。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 // @input等表示该变量可在爬虫设置中动态设置
 var keyword = "女装";// @input(keyword,商品搜索关键字，爬取蘑菇街该关键字的搜索结果)
