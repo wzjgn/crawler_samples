@@ -1,6 +1,10 @@
 /*
   爬取天涯社区的热帖榜（http://bbs.tianya.cn/hotArticle.jsp）上的列表页信息，包括标题、作者和回复时间。
   爬取的数据全部来自于列表页。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var configs = {
     domains: ["bbs.tianya.cn"],
