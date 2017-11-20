@@ -1,6 +1,10 @@
 /*
   爬取好搜问答的内容。
   因为好搜有反爬，所以该爬虫通过切换代理IP来防屏蔽。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var keywords = ["微信","微博"];//@tags(keywords, 关键字, 分别爬取好搜上这些关键字的搜索结果)
 
