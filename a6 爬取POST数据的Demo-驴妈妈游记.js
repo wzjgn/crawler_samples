@@ -1,6 +1,10 @@
 /*
   爬取驴妈妈游记（http://www.lvmama.com/trip/list.html）。
   列表页是post请求，所以在回调函数中将下一页列表页包括post参数一起添加到待爬队列中
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var configs = {
     domains: ["www.lvmama.com"],
