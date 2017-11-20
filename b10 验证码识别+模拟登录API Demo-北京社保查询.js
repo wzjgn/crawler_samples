@@ -1,6 +1,10 @@
 /*
   该API从北京市社保局网站（http://www.bjrbj.gov.cn/csibiz/indinfo/login.jsp）实时查询社保缴纳记录。
   因为缴纳记录需要输入验证码、身份证号和查询密码登录后才能查到，所以该API包含了神箭手的验证码自动识别和模拟登录功能。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/api.html
 */
 var uid = "";//@input(uid,查询的身份证号)
 var pwd = "";//@input(pwd,社保查询密码，密码错误无法查询【登录地址：http://www.bjrbj.gov.cn/csibiz/indinfo/login.jsp】)
