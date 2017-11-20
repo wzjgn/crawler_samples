@@ -1,3 +1,8 @@
+/*
+  爬虫源码：爬取雷锋网的
+  开发语言：原生JavaScript
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
+*/
 var configs = {
     domains: ["leiphone.com"],// 网站域名，设置域名后只处理这些域名下的网页
     scanUrls: ["https://www.leiphone.com/search?s=vr&site=article"],// 入口页链接，分别从这些链接开始爬取
