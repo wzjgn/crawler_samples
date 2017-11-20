@@ -1,6 +1,7 @@
 /*
-  爬虫源码：爬取雷锋网的
+  爬虫源码：爬取雷锋网的文章
   开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
   请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var configs = {
