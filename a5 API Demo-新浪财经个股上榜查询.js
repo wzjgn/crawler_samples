@@ -1,5 +1,9 @@
 /*
   实时获取近5、10、30、60日个股上榜统计数据。包括上榜次数、累积购买额、累积卖出额、净额、买入席位数和卖出席位数。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/api.html
 */
 var days="5";//@input(days,统计周期,5、10、30和60日，默认为5日)
 
