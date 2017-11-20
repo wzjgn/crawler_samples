@@ -2,7 +2,9 @@
   设置自定义输入，根据爬虫设置里输入的城市名来爬取这些城市下的二手房信息
   自定义输入的详细教程请查阅：http://docs.shenjian.io/develop/extensions/templated.html
   
-  如何执行代码：https://github.com/ShenJianShou/crawler_samples/blob/master/%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81.txt
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var cities = ["北京"];//@tags(cities,58上的城市名,分别爬取这些城市的二手房信息（如不填写表示爬取全国，如爬取全国爬虫初始化时间较长请耐心等待）)
 
