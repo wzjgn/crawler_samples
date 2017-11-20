@@ -1,6 +1,10 @@
 /*
   爬取87870 VR资讯（http://www.87870.com/news/list_0_1.html）的文章，要爬取的文章标签信息在文章列表页里。
   所以该Demo中我们使用神箭手提供的 UrlContext 附加数据 将列表页需要的数据附加到内容页中，再进行统一抽取。
+  
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 
 var configs = {
