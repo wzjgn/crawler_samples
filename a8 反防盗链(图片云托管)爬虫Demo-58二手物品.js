@@ -2,6 +2,10 @@
   爬取58上的二手物品信息（转转）
   该demo主要讲解如何在神箭手上进行图片云托管，图片云托管可以解决有些网站防盗链导致爬取的图片链接失效的问题；
   
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
+  
   托管图片的步骤是：
   1、启动爬虫之前，需要在爬虫设置中勾选"图片云托管"，并且设置托管的位置
   2、爬取结果里，后缀名是.jpg/.png/.gif/.jpeg的field，或者img标签里的图片，神箭手在爬取过程中会默认进行下载托管
