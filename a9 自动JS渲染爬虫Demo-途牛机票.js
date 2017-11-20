@@ -3,6 +3,10 @@
   因为机票信息是js异步加载的，所以该爬虫使用神箭手的自动JS渲染功能；
   只需要设置一个参数‘enableJS’就可以让爬虫自动加载页面所有js，然后和抽取网页源码里的数据一样简单地抽取异步加载的数据。
   
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
+  
   注意：自动JS渲染的时间较长，简单的js请求建议还是用分析请求的方式来爬取更好！
 */
 var fromCity="北京";//@input(fromCity,国内出发城市,比如：北京)
