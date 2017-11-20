@@ -1,6 +1,10 @@
 /*
   爬取豌豆荚安卓游戏排行版（http://www.wandoujia.com/top/game）上的游戏信息。
   因为列表页是js动态生成的（网页源码中并没有），所以需要分析网络请求，手动添加下一页列表页和内容页链接到待爬队列中。
+
+  开发语言：原生JavaScript
+  开发教程：http://docs.shenjian.io/develop/summary/summary.html
+  请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
 */
 var configs = {
     domains: ["wandoujia.com"],
