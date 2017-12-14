@@ -1,5 +1,5 @@
 /*
-	  神箭手云_爬虫开发示例代码
+    神箭手云_爬虫开发示例代码
     支持原生JavaScript
     开发教程：http://docs.shenjian.io/develop/summary/summary.html
     请在神箭手云上运行代码：http://docs.shenjian.io/overview/guide/develop/crawler.html
