@@ -72,7 +72,7 @@ configs.onProcessHelperPage = function (page, content, site) {
     site.addUrl(contentUrls[i]);
   }
   // 从列表页中抽取下一页列表页url，添加到待爬url队列中
-  var nextPageUrl = extract(content, "//a[contains(text()[1],'下一页') and not(contains(@class,'disabled'))]/@href");console.log(nextPageUrl);
+  var nextPageUrl = extract(content, "//a[contains(text()[1],'下一页') and not(contains(@class,'disabled'))]/@href");
   if(nextPageUrl){
     site.addUrl(nextPageUrl);
   }
