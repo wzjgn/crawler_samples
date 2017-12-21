@@ -117,7 +117,8 @@ var configs = {
         {
             name:"contact",
             alias: "联系人",
-            selector: "//div[contains(@class,'house-basic-item4')]/p[contains(@class,'nav')]/span"
+            selectorType : SelectorType.Regex,
+            selector: /"userName"\s*:\s*"(.+?)",/
         },
         {
             name:"phone",
@@ -227,7 +228,7 @@ configs.afterExtractField = function (fieldName, data, page, site) {
   }else if(fieldName == "price"){
     data = data.replace(/<\/?.+?>/g,"");
     return data;
-  }else if(fieldName == "unit_price" || fieldName == "contact"){
+  }else if(fieldName == "unit_price"){
     data = data.replace(/\s+/g,"").replace("说","");
     return data;
   }else if(fieldName == "photos"){
@@ -240,9 +241,17 @@ configs.afterExtractField = function (fieldName, data, page, site) {
       data[d] = hostFile(data[d], FileType.IMAGE);
     }
     return data;
+  }else if(fieldName == "contact"){
+    return decodeUnicode(data);
   }
   return data;
 };
+
+// unicode解码成汉字  
+function decodeUnicode(str) {  
+  str = str.replace(/\\/g, "%");  
+  return unescape(str);  
+} 
 
 /*
   启动爬虫
