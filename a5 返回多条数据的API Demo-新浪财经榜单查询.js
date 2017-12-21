@@ -1,5 +1,6 @@
 /*
-  实时获取近5、10、30、60日个股上榜统计数据。包括上榜次数、累积购买额、累积卖出额、净额、买入席位数和卖出席位数。
+  实时获取新浪财经近5、10、30、60日个股上榜统计数据。包括上榜次数、累积购买额、累积卖出额、净额、买入席位数和卖出席位数。
+  返回JSON格式的多条数据
   
   开发语言：原生JavaScript
   开发教程：http://docs.shenjian.io/develop/summary/summary.html
@@ -9,10 +10,10 @@ var days="5";//@input(days,统计周期,5、10、30和60日，默认为5日)
 
 var configs = {
     domains: ["finance.sina.com.cn"],
-    scanUrls: [],
+    scanUrls: [], // 通过后面的beforeCrawl函数添加入口页链接
     fields: [ // API只抽取scanurls中的网页，并且不会再自动发现新链接
         {
-            name: "items",
+            name: "items", // 抽取的页面包含多条数据，抽取方式为fields里只包含一个有多个子项的field
             selector: "//table[@id='dataTable']//tr", 
             repeated: true,
             children: [
@@ -65,7 +66,7 @@ var configs = {
 
 configs.beforeCrawl = function(site){
     if(days!=="5" && days!=="10" && days!=="30" && days!=="60"){
-      system.exit("输入的统计周期错误。"); // 停止调用，返回自定义错误信息
+      system.exit("输入的统计周期错误。"); // 如果输入错误，停止调用并返回自定义错误信息
     }
     // 根据输入值生成要解析的网页url，并添加到scanurl中
     var url = "http://vip.stock.finance.sina.com.cn/q/go.php/vLHBData/kind/ggtj/index.phtml?last="+days+"&p=1";
