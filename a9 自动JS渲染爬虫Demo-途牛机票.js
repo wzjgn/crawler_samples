@@ -33,19 +33,20 @@ if(date===""){
 var configs = {
     domains: ["tuniu.com"],
     scanUrls: [],
-    contentUrlRegexes: [/http:\/\/www\.tuniu\.com\/flight\/city_\d+_\d+\/\?start=.+/],
+    contentUrlRegexes: [/http:\/\/flight\.tuniu\.com\/domestic\/list.+/],
     helperUrlRegexes: [""], // 设置待爬队列中所有网页都不是列表页
     enableJS: true, // 设置enableJS为true，那么待爬队列里的所有网页都会自动进行JS渲染
+    renderTime: 10000, // 设置JS渲染的超时时间为10秒
     fields: [  // fields里的数据都是js生成的，开启js渲染后抽取和正常抽取网页源码里的数据一样简单
         {
             name: "flights", // 如果fields里只有一个field（对象数组），表示单页提取多条数据。
-            selector: "//div[contains(@class,'flightlist')]/div[contains(@class,'flg')]", 
+            selector: "//div[contains(@class,'J-flightlist')]", 
             repeated: true,
             children: [   
                 {
                     name: "flight_number",
                     alias: "航班号",
-                    selector: "//div[contains(@class,'flihtnumber')]/span[contains(@class,'number')]",
+                    selector: "//div[contains(@class,'flihtnumber')]",
                     primaryKey: true // primaryKey设置为true的field会一起作为主键，主键完全相同的数据会自动去重。缺省第一个field是主键
                 },
                 {
@@ -54,46 +55,41 @@ var configs = {
                     selector: "//div[contains(@class,'aircom')]"
                 },
                 {
-                    name: "model",
-                    alias: "机型",
-                    selector: "//div[contains(@class,'flihtnumber')]/span[contains(@class,'sie')]"
-                },
-                {
                   	 name: "lowest_price",
                     alias: "最低价格（元）",
-                    selector: "//div[contains(@class,'price')]/span[contains(@class,'muber')]"
+                    selector: "//span[contains(@class,'num')]"
                 },
                 {
                     name: "dep_time",
                     alias: "起飞时间",
-                    selector: "//div[contains(@class,'timeleft')]/p[contains(@class,'hours')]/text()",
+                    selector: "//div[contains(@class,'fl-departInf')]/p[1]",
                     primaryKey: true
                 },
                 {
                     name: "dep_airport",
                     alias: "起飞机场",
-                    selector: "//div[contains(@class,'timeleft')]/p[contains(@class,'airport')]"
+                    selector: "//div[contains(@class,'fl-departInf')]/p[contains(@class,'airport')]/span"
                 },
                 {
                     name: "arv_time",
                     alias: "到达时间",
-                    selector: "//div[contains(@class,'timeright')]/p[contains(@class,'hours')]/text()",
+                    selector: "//div[contains(@class,'fl-arriveInf')]/span[1]/span",
                     primaryKey: true
                 },
                 {
                     name: "arv_airport",
                     alias: "到达机场",
-                    selector: "//div[contains(@class,'timeright')]/p[contains(@class,'airport')]"
+                    selector: "//div[contains(@class,'fl-arriveInf')]/p[contains(@class,'airport')]/span"
                 },
                 {
                     name: "duration",
                     alias: "飞行时长",
-                    selector: "//div[contains(@class,'duration')]/p[contains(@class,'durationTime')]"
+                    selector: "//p[contains(@class,'durationTime')]"
                 },
                 {
                   	 name: "ontime_rate",
                     alias: "准点率",
-                    selector: "//div[contains(@class,'ratenumber')]"
+                    selector: "//div[contains(@class,'rateWrap')]//li"
                 }
             ]
         }
@@ -111,10 +107,10 @@ configs.beforeCrawl = function(site){
     for(var i=0;i<allCodes.length;i++){
       var cityName = allCodes[i].cityName;
       if(cityName.indexOf(fromCity)!=-1){
-        fromCityCode = allCodes[i].cityCode;
+        fromCityCode = allCodes[i].cityIataCode;
       }
       if(cityName.indexOf(toCity)!=-1){
-        toCityCode = allCodes[i].cityCode;
+        toCityCode = allCodes[i].cityIataCode;
       }
     } 
     if(!fromCityCode){
@@ -125,7 +121,7 @@ configs.beforeCrawl = function(site){
     }
   
     // 根据取到的城市码，可以得到实际的机票内容页url，并添加到待爬队列中
-    var contentUrl = "http://www.tuniu.com/flight/city_"+fromCityCode+"_"+toCityCode+"/?start="+date;
+    var contentUrl = "http://flight.tuniu.com/domestic/list/"+fromCityCode+"_"+toCityCode+"_ST_1_0_0?deptDate="+date;
     site.addUrl(contentUrl);
 };
 
