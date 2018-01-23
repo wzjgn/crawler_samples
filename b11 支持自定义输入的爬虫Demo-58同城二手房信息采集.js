@@ -115,17 +115,6 @@ var configs = {
             repeated : true
         },
         {
-            name:"contact",
-            alias: "联系人",
-            selectorType : SelectorType.Regex,
-            selector: /"userName"\s*:\s*"(.+?)",/
-        },
-        {
-            name:"phone",
-            alias: "电话",
-            selector: "//p[contains(@class,'phone-num')]"
-        },
-        {
             name:"desc",
             alias: "描述",
             selector: "//div[@id='generalDesc']//div[contains(@class,'general-item-wrap')]"
@@ -241,17 +230,9 @@ configs.afterExtractField = function (fieldName, data, page, site) {
       data[d] = hostFile(data[d], FileType.IMAGE);
     }
     return data;
-  }else if(fieldName == "contact"){
-    return decodeUnicode(data);
   }
   return data;
 };
-
-// unicode解码成汉字  
-function decodeUnicode(str) {  
-  str = str.replace(/\\/g, "%");  
-  return unescape(str);  
-} 
 
 /*
   启动爬虫
